@@ -1,2 +1,2 @@
 # data-fetcher
-nodejs app that collects data 
+    Server side app in nodejs for data collecting from different sources.
