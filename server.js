@@ -6,7 +6,7 @@ var bodyParser = require('body-parser')
 var cors = require("cors")
 
 var server = http.createServer(app);
-port = process.env.PORT || 8000;
+port = process.env.PORT || 8080;
 
 app.use(bodyParser.urlencoded({ extended: false })); //Parses urlencoded bodies
 app.use(bodyParser.json()) //SendJSON response
