@@ -1,0 +1,48 @@
+- dataset
+- procesare
+- views 
+
+
+{
+    aplicatie finala, google-maps
+    ilustrare conceptelor pe harta 
+        - (about location)
+        - corelare locatie/etnie, categorie de varsta (usa, sense data)
+        - pedictie de genul (locuitori-ocupatie)
+        - rata turismului pentru o zona
+}
+MODUL !IMPORTANT
+{
+        - join datasets(match of entities, yelp and sources)
+         1. by location
+         2. filtru dupa categoria entitatii pentru locatii/etitati cu acelasi numa daca facem join dupa nume
+         3. locatie
+}
+
+aplicatie
+{
+    [
+        - aplicatie in care, vreau sa merg la madrid, what to do in madrid, 
+        trip advisor mai avansat cu o harta a madridului, zone importante dupa profil
+    ] nu mergem pe astea
+    [
+    - din aspectul proprietarului de business
+        - proprietarul
+            -vreau sa-mi intaresc business-uri 
+            -sugereze imbynatariri
+            -ce are alt proprietar si nu am eu
+            -poate fi mai bun pentru ca 
+            -astea sunt puncte tari
+            -astea sunt puncte slabe
+            -principalii competitori
+            -cum pot sa cresc 
+            -in ce zona ar fi sa ma extind si de ce
+            -locatii fierbinti in care sa investesc
+            -tipuri de business 
+
+            imbunatatirea unei zone 
+            google trands, statistici cu privire la locatie, entitate
+    -baze de date
+        yelp + other datasets
+    ]
+}

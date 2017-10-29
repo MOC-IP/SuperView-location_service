@@ -16,11 +16,13 @@ app.use(cors());
 var CrawlerManager = require('./crawler-manager')
 
 var crawlerManager = new CrawlerManager();
+var FacebookAPI =  require('./facebook-api');
+var facebookAPI = new FacebookAPI();
 
+//?  branch for api for google
+var googleRouter = express.Router();
 
-var router = express.Router();
-
-router.route('/places')
+googleRouter.route('/places')
     .get((req, res) => {
         // console.log('here')
         crawlerManager.update("Iasi", (err, data) => {
@@ -31,11 +33,33 @@ router.route('/places')
             res.status(200).send(data)
         })
     })
-router.route('/health')
+googleRouter.route('/health')
     .get((req, res)=>{
         res.send('checkout /places')
     })
-app.use('/', router);
-server.listen(port, () => {
-    console.log(`backend listening on port ${port}`);
-});
+app.use('/google',googleRouter);
+
+
+var facebookRouter = express.Router();
+
+facebookRouter.route('/places')
+    .get((req, res)=>{
+        // console.log(req.query.name)
+        if(!req.query.name){
+            return res.status(400).send({"status":"bad request parameter name not found"});
+        }
+        facebookAPI.getPlaceInfo(req.query.name,(err, data)=>{
+            if(err){
+                // console.log(err);
+                return res.status(500).send(err);
+            }
+            return res.status(200).send(data);
+        })
+    })
+app.use("/facebook", facebookRouter);
+facebookAPI.init((err, status)=>{
+    server.listen(port, () => {
+        console.log(`backend listening on port ${port}`);
+    });
+    
+})
