@@ -16,6 +16,43 @@ class GoogleAPI {
 
 
     }
+    getPlaceByName(placeName, next) {
+        let params = {
+            input: placeName,
+            key: this.PLACES_API_KEY
+        }
+        let url = `${this.placesEndpoint}autocomplete/json?${queryString.stringify(params)}`
+        let options = {
+            method: 'GET',
+            url: url,
+            headers: { 'content-type': 'application/json' }
+        }
+        console.log(url);
+        request(options, (err, response, body) => {
+            if (err) {
+                return next(err)
+            }
+            // console.log(response);
+            body = JSON.parse(body);
+            // console.log(body);
+            return next(null, body);
+        });
+
+    }
+    getPlaceInfo(placeName, next) {
+        this.getPlaceByName(placeName, (err, data)=>{
+            console.log(data);
+            if(err){
+                return next(err);
+            }
+            this.getPlaceDetais(data.predictions[0].place_id,(err, data)=>{
+                if(err){
+                    return next(err);
+                }
+                return next(null, data);
+            })
+        })
+    }
     getPlaceDetais(placeID, next) {
         let params = {
             placeid: placeID,
@@ -113,7 +150,7 @@ class GoogleAPI {
             console.log(type, "==>", result.status)
             if (result.status === "OK") {
                 result.results.forEach((place) => {
-                    
+
                     this.getPlaceDetais(place.place_id, (err, details) => {
                         processed += 1;
                         index += 1;
@@ -121,7 +158,7 @@ class GoogleAPI {
                         // console.log(data[type]);
                         data[type].results[index]['place_details'] = details;
                         // console.log(details);
-                        
+
                         if (processed == total) {
                             next(null, data)
 
