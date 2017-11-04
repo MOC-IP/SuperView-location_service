@@ -51,6 +51,9 @@ class FacebookAPI {
             if (err) {
                 return next(err);
             }
+            if(res.data.length==0){
+                return next(null, {"status":"PLACE_NOT_FOUND"})
+            }
             let place = res.data[0];
             this.graph.get(place.id, PARAMS, (err, res) => {
                 if (err)

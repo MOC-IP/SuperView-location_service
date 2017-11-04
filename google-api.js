@@ -45,6 +45,9 @@ class GoogleAPI {
             if(err){
                 return next(err);
             }
+            if(data.status=='ZERO_RESULTS'){
+                return next(null, {"status":"PLACE_NOT_FOUND"});
+            }
             this.getPlaceDetais(data.predictions[0].place_id,(err, data)=>{
                 if(err){
                     return next(err);
