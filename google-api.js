@@ -16,9 +16,13 @@ class GoogleAPI {
 
 
     }
-    getPlaceByName(placeName, next) {
+    getPlaceByName(place_to_search, next) {
+        let input = place_to_search.name;
+        if(place_to_search.city){
+            input+=` ${place_to_search.city}`
+        }
         let params = {
-            input: placeName,
+            input: input ,
             key: this.PLACES_API_KEY
         }
         let url = `${this.placesEndpoint}autocomplete/json?${queryString.stringify(params)}`
@@ -39,8 +43,8 @@ class GoogleAPI {
         });
 
     }
-    getPlaceInfo(placeName, next) {
-        this.getPlaceByName(placeName, (err, data)=>{
+    getPlaceInfo(place_to_search, next) {
+        this.getPlaceByName(place_to_search, (err, data)=>{
             console.log(data);
             if(err){
                 return next(err);
@@ -48,7 +52,24 @@ class GoogleAPI {
             if(data.status=='ZERO_RESULTS'){
                 return next(null, {"status":"PLACE_NOT_FOUND"});
             }
-            this.getPlaceDetais(data.predictions[0].place_id,(err, data)=>{
+            // console.log(data);
+
+            let target = null;
+            if(place_to_search.city){
+                data.predictions.forEach((prediction)=>{
+                    if ( prediction.description.indexOf(place_to_search.city) != -1){
+                          target = prediction;
+                    }
+                })
+                if(!target){
+                    return next(null, {"status": "PLACE_NOT_FOUND",
+                                        "msg": `place ${place_to_search.name} from ${place_to_search.city} not found`})
+                }
+            }else{
+                target = data.predictions[0]
+            }
+            
+            this.getPlaceDetais(target.place_id,(err, data)=>{
                 if(err){
                     return next(err);
                 }
@@ -141,7 +162,6 @@ class GoogleAPI {
 
     }
     getPlacesDetails(data, next) {
-        let searchedTypes = 0;
         let processed = 0;
         let total = 0;
         this.placeTypes.forEach(type => {

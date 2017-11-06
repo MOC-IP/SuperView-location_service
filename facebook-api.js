@@ -1,4 +1,4 @@
-fb_app = require("./config/fb-app.config.json");
+let fb_app = require("./config/fb-app.config.json");
 const PARAMS = {
     fields: [
         "category_list",
@@ -35,6 +35,11 @@ class FacebookAPI {
     getPlaceByName(placeName, next) {
         var searchOptions = {
             q: placeName,
+            fields: [
+                "name",
+                "id",
+                "location"
+            ].toString(),
             type: "Place"
         }
         // console.log(searchOptions, this.graph.getAccessToken());
@@ -46,16 +51,32 @@ class FacebookAPI {
         })
     }
 
-    getPlaceInfo(placeName, next) {
-        this.getPlaceByName(placeName, (err, res) => {
+    getPlaceInfo(place_to_search, next) {
+
+        this.getPlaceByName(place_to_search.name, (err, res) => {
             if (err) {
                 return next(err);
             }
-            if(res.data.length==0){
-                return next(null, {"status":"PLACE_NOT_FOUND"})
+            if (res.data.length == 0) {
+                return next(null, { "status": "PLACE_NOT_FOUND" })
             }
-            let place = res.data[0];
-            this.graph.get(place.id, PARAMS, (err, res) => {
+            let target = null;
+            if(place_to_search.city){
+                res.data.forEach((prediction)=>{
+                    if ( prediction.location.city=== place_to_search.city){
+                          target = prediction;
+                    }
+                })
+                if(!target){
+                    return next(null, {"status": "PLACE_NOT_FOUND",
+                                        "msg": `place ${place_to_search.name} from ${place_to_search.city} not found`})
+                }
+            }else{
+                target = res.data[0]
+            }
+            // console.log(res);
+            // let place = res.data[0];
+            this.graph.get(target.id, PARAMS, (err, res) => {
                 if (err)
                     return next(err);
                 return next(null, res);
